@@ -26,7 +26,7 @@ import org.omg.CORBA.portable.ValueBase;
 import Helper.FileHelper;
 import ICTCLAS.I3S.AC.ICTCLAS50;
 
-public class WordKut {
+public class TrainProcess {
 	//所有文档集
 	HashMap<String, HashMap<String, Integer>> wordsMap = new HashMap<String, HashMap<String, Integer>>();
 	//svm语料格式
@@ -36,7 +36,7 @@ public class WordKut {
 	
 	public static HashMap<String, Integer> classLabel = new HashMap<String, Integer>();
 
-	public WordKut(){
+	public TrainProcess(){
 		loadClassLabel();
 	}
 	
@@ -177,7 +177,7 @@ public class WordKut {
 	
 	public static void main(String[] args) throws Exception{
 		
-		WordKut model = new WordKut();
+		TrainProcess model = new TrainProcess();
 		model.cutWord("article/");
 		model.makeDictionary(new File("trainfile/dictionary.txt"));
 		model.convertToSvmFormat(new File("trainfile/train_2.txt"));

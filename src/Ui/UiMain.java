@@ -8,9 +8,10 @@ import svmHelper.svm_train;
 
 public class UiMain {
 
+	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws IOException{
-		String[] arg = {"-t","0","trainfile/train_1.txt","trainfile/model_1.txt"};
-		String[] parg = {"testfile/test_1.txt","trainfile/model_1.txt","testfile/result_1.txt"};
+		String[] arg = {"-t","0","trainfile/train_2.txt","trainfile/model_2.txt"};
+		String[] parg = {"testfile/test_1.txt","trainfile/model_2.txt","testfile/result_1.txt"};
 		
 		System.out.println("ÑµÁ·¿ªÊ¼");
 		svm_train train = new svm_train();
