@@ -1,4 +1,4 @@
-package Ui;
+package AdminUi;
 import java.awt.Label;
 import java.io.BufferedReader;
 import java.io.File;
@@ -71,7 +71,11 @@ public class TrainProcess {
 	 */
 	private int getClassLabel(String className){
 		String[] arr = className.split("_");
-		return classLabel.get(arr[0]);
+		if (classLabel.containsKey(arr[0])) {
+			return classLabel.get(arr[0]);
+		}else{
+			return -1;
+		}
 	}
 	
 	private HashMap<String, Integer> doCutWord(String content){
@@ -179,8 +183,8 @@ public class TrainProcess {
 		
 		TrainProcess model = new TrainProcess();
 		model.cutWord("article/");
-		model.makeDictionary(new File("trainfile/dictionary.txt"));
-		model.convertToSvmFormat(new File("trainfile/train_2.txt"));
+		model.makeDictionary(new File("trainfile/dictionary.txt"));//生成所有词的字典
+		model.convertToSvmFormat(new File("trainfile/train_2.txt"));//把语料转换成libsvm的模式
 	}
 	
 	

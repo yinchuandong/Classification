@@ -1,4 +1,4 @@
-package Ui;
+package AdminUi;
 
 import java.io.IOException;
 import java.sql.Date;

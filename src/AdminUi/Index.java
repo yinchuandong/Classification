@@ -1,4 +1,4 @@
-package Ui;
+package AdminUi;
 
 import libsvm.svm;
 import libsvm.svm_model;
