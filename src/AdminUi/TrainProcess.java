@@ -23,27 +23,22 @@ import java.util.regex.Pattern;
 
 import org.omg.CORBA.portable.ValueBase;
 
+import Base.BaseWordCut;
 import Helper.FileHelper;
 import ICTCLAS.I3S.AC.ICTCLAS50;
 
-public class TrainProcess {
+public class TrainProcess extends BaseWordCut{
 	//所有文档集
 	HashMap<String, HashMap<String, Integer>> wordsMap = new HashMap<String, HashMap<String, Integer>>();
 	//svm语料格式
-	HashMap<String, HashMap<Integer, Integer>> svmLabelMap = new HashMap<String, HashMap<Integer, Integer>>();
+	HashMap<String, HashMap<Integer, Double>> svmLabelMap = new HashMap<String, HashMap<Integer, Double>>();
 	//词典
 	HashMap<String, Integer> wordDict = new HashMap<String,Integer>();
 	
 	public static HashMap<String, Integer> classLabel = new HashMap<String, Integer>();
 
-	public TrainProcess(){
-		loadClassLabel();
-	}
-	
-	private void loadClassLabel(){
-		classLabel.put("政治", 1);
-		classLabel.put("音乐", 2);
-		classLabel.put("互联网", 3);
+	public TrainProcess() throws IOException{
+		wordDict = loadClassFromFile(new File("trainfile/classLabel.txt"));
 	}
 	
 	private HashMap<String, String> readFile(String path) throws Exception{
@@ -78,36 +73,6 @@ public class TrainProcess {
 		}
 	}
 	
-	private HashMap<String, Integer> doCutWord(String content){
-		HashMap<String, Integer> resultMap = new HashMap<String,Integer>();
-		try {
-			ICTCLAS50 ictclas50 = new ICTCLAS50();
-			String argu = ".";
-			if (ictclas50.ICTCLAS_Init(argu.getBytes("gbk"))==false) {
-				System.out.println("init false");
-			}else{
-//				System.out.println("init true");
-			}
-			
-			String userdict = "userdict.txt";
-			byte[] nativeBytes1 = ictclas50.ICTCLAS_ParagraphProcess(content.getBytes("gbk"), 0, 1);
-			String nativeStr1 = new String(nativeBytes1);
-			
-			Pattern pattern = Pattern.compile("( ([^ ])*?)(/n(\\w)*) ");
-			Matcher matcher = pattern.matcher(nativeStr1);	
-			while (matcher.find()) {
-				String word = matcher.group(1).trim();
-				if(resultMap.containsKey(word)){//如果不存在该项，则添加该项，并把词频置为1
-					resultMap.put(word, resultMap.get(word)+1);
-				}else{//如果已经存在该项，则词频+1
-					resultMap.put(word, 1);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return resultMap;
-	}
 	
 	public void cutWord(String path) throws Exception{
 		HashMap<String, String> articles = readFile(path);
@@ -184,7 +149,7 @@ public class TrainProcess {
 		TrainProcess model = new TrainProcess();
 		model.cutWord("article/");
 		model.makeDictionary(new File("trainfile/dictionary.txt"));//生成所有词的字典
-		model.convertToSvmFormat(new File("trainfile/train_2.txt"));//把语料转换成libsvm的模式
+		model.convertToSvmFormat(new File("trainfile/svm.train"));//把语料转换成libsvm的模式
 	}
 	
 	

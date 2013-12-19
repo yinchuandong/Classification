@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -64,6 +65,12 @@ public class FileHelper {
 		return content;
 	}
 	
+	/**
+	 * 读取txt和doc的公共方法
+	 * @param file
+	 * @return
+	 * @throws Exception
+	 */
 	public static String readTxtOrDoc(File file) throws Exception{
 		String[] name = file.getName().split("\\.");
 		String ext = name[name.length-1];
@@ -81,11 +88,12 @@ public class FileHelper {
 		return result;
 	}
 	
+	
 	public static void main(String[] args){
 		try {
 			String text = readTxtOrDoc(new File("E:\\android\\windows\\Classification\\article\\政治_1.txt"));
 			System.out.println(text);
-			System.out.println("开始读取了");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
