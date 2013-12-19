@@ -13,6 +13,7 @@ import java.util.Iterator;
 
 import Base.BaseWordCut;
 import Helper.FileHelper;
+import Helper.TfIdfHelper;
 
 public class WordCut extends BaseWordCut {
 	/**
@@ -23,7 +24,7 @@ public class WordCut extends BaseWordCut {
 	/**
 	 * articleWorsMap对应tf-idf格式
 	 */
-	private HashMap<File, HashMap<Integer, Double>> tfIdfMap = new HashMap<File, HashMap<Integer, Double>>(); 
+	private HashMap<File, HashMap<String, Double>> tfIdfMap = new HashMap<File, HashMap<String, Double>>(); 
 	
 	/**
 	 * 字典的所有词项和label 
@@ -101,14 +102,16 @@ public class WordCut extends BaseWordCut {
 	 */
 	private void convertToSvmFormat(File outFile){
 		try {
+			TfIdfHelper tfIdfHelper = new TfIdfHelper(articleWordsMap);
+			this.tfIdfMap = tfIdfHelper.calculate();
 			PrintWriter writer = new PrintWriter(outFile);
-			Iterator<File> artIterator = articleWordsMap.keySet().iterator();
+			Iterator<File> artIterator = tfIdfMap.keySet().iterator();
 			while (artIterator.hasNext()) {
 				File file = artIterator.next();
 				//写入svm语料的类别号
 				writer.print(getClassLabel(file.getName()) + " ");
 				
-				HashMap<String, Integer> artWords = articleWordsMap.get(file);
+				HashMap<String, Double> artWords = tfIdfMap.get(file);
 				Iterator<String> wordsIterator = artWords.keySet().iterator();
 				while (wordsIterator.hasNext()) {
 					String item = (String) wordsIterator.next();
@@ -116,9 +119,9 @@ public class WordCut extends BaseWordCut {
 					if(wordsDict.containsKey(item)){
 						index = wordsDict.get(item);
 					}				
-					int value = artWords.get(item);
+					double tfIdf = artWords.get(item);
 					//写入index和value
-					writer.print(index + ":" + value + " ");
+					writer.print(index + ":" + tfIdf + " ");
 				}
 				writer.println();//写入换行符
 			}

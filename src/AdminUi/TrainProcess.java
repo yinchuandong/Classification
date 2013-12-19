@@ -25,26 +25,33 @@ import org.omg.CORBA.portable.ValueBase;
 
 import Base.BaseWordCut;
 import Helper.FileHelper;
+import Helper.TfIdfHelper;
 import ICTCLAS.I3S.AC.ICTCLAS50;
 
 public class TrainProcess extends BaseWordCut{
-	//所有文档集
-	HashMap<String, HashMap<String, Integer>> wordsMap = new HashMap<String, HashMap<String, Integer>>();
-	//svm语料格式
-	HashMap<String, HashMap<Integer, Double>> svmLabelMap = new HashMap<String, HashMap<Integer, Double>>();
-	//词典
-	HashMap<String, Integer> wordDict = new HashMap<String,Integer>();
+	/**
+	 * 所有训练集分词后的map
+	 */
+	HashMap<File, HashMap<String, Integer>> wordsMap = new HashMap<File, HashMap<String, Integer>>();
+	/**
+	 * wordsMap对应的tf-idf频率
+	 */
+	HashMap<File, HashMap<String, Double>> tfIdfMap = new HashMap<File, HashMap<String, Double>>();
+	/**
+	 * 所有训练集生成的词典
+	 */
+	HashMap<String, Integer> wordsDict = new HashMap<String,Integer>();
 	
 	public static HashMap<String, Integer> classLabel = new HashMap<String, Integer>();
 
 	public TrainProcess() throws IOException{
-		wordDict = loadClassFromFile(new File("trainfile/classLabel.txt"));
+		classLabel = loadClassFromFile(new File("trainfile/classLabel.txt"));
 	}
 	
-	private HashMap<String, String> readFile(String path) throws Exception{
+	private HashMap<File, String> readFile(String path) throws Exception{
 		File directory = new File(path);
 		File[] files = directory.listFiles();
-		HashMap<String, String> articles = new HashMap<String,String>();
+		HashMap<File, String> articles = new HashMap<File,String>();
 		for (File file : files) {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String temp = null;
@@ -52,10 +59,8 @@ public class TrainProcess extends BaseWordCut{
 			while((temp = reader.readLine()) != null){
 				content += temp;
 			}
-			String key = file.getName().split("\\.")[0];
-			articles.put(key, content);
+			articles.put(file, content);
 		}
-		
 		return articles;
 	}
 	
@@ -75,13 +80,13 @@ public class TrainProcess extends BaseWordCut{
 	
 	
 	public void cutWord(String path) throws Exception{
-		HashMap<String, String> articles = readFile(path);
-		Iterator<String> iterator = articles.keySet().iterator();
+		HashMap<File, String> articles = readFile(path);
+		Iterator<File> iterator = articles.keySet().iterator();
 		while(iterator.hasNext()){
-			String key = iterator.next();
-			String content = articles.get(key);
+			File file = iterator.next();
+			String content = articles.get(file);
 			HashMap<String, Integer> temp = doCutWord(content);
-			this.wordsMap.put(key, temp);
+			this.wordsMap.put(file, temp);
 		}
 	}
 
@@ -89,19 +94,20 @@ public class TrainProcess extends BaseWordCut{
 	 * 生成字典，index item,如：0 中国
 	 * @param file
 	 */
-	public void makeDictionary(File file){
+	public void makeDictionary(File outFile){
 		try {
-			int index = 0;
-			PrintWriter writer = new PrintWriter(file);
-			Iterator<String> classIterator = wordsMap.keySet().iterator();
+			int index = 1;
+			PrintWriter writer = new PrintWriter(outFile);
+			Iterator<File> classIterator = wordsMap.keySet().iterator();
 			while (classIterator.hasNext()) {
-				String className = classIterator.next();
-				HashMap<String, Integer> itemMap = wordsMap.get(className);
+				File file = classIterator.next();
+				//词项=>词频
+				HashMap<String, Integer> itemMap = wordsMap.get(file);
 				Iterator<String> itemIterator = itemMap.keySet().iterator();
 				while(itemIterator.hasNext()){
 					String itemName = itemIterator.next();
-					if(!wordDict.containsKey(itemName)){
-						wordDict.put(itemName, index);
+					if(!wordsDict.containsKey(itemName)){
+						wordsDict.put(itemName, index);
 						writer.println(index+ " " +itemName);
 						index ++ ;
 					}
@@ -116,26 +122,29 @@ public class TrainProcess extends BaseWordCut{
 	/**
 	 * 转换成libsvm的语料格式
 	 */
-	public void convertToSvmFormat(File file){
+	public void convertToSvmFormat(File outFile){
 		try {
-			PrintWriter writer = new PrintWriter(file);
-			HashMap<String, HashMap<Integer, Integer>> svmLabelMap = new HashMap<String, HashMap<Integer, Integer>>();
-			Iterator<String> classIterator = wordsMap.keySet().iterator();
+			TfIdfHelper tfIdfHelper = new TfIdfHelper(wordsMap);
+			this.tfIdfMap = tfIdfHelper.calculate();
+			PrintWriter writer = new PrintWriter(outFile);
+			Iterator<File> classIterator = tfIdfMap.keySet().iterator();
 			while (classIterator.hasNext()) {
-				String className = classIterator.next();
-				HashMap<String, Integer> itemMap = wordsMap.get(className);
+				File file = classIterator.next();
+				//词项=>词频
+				HashMap<String, Double> itemMap = tfIdfMap.get(file);
 				Iterator<String> itemIterator = itemMap.keySet().iterator();
-				HashMap<Integer, Integer> newSvmMap = new HashMap<Integer,Integer>();
-				writer.print(getClassLabel(className) + " ");
+				writer.print(getClassLabel(file.getName()) + " ");
+				System.out.println(getClassLabel(file.getName()));
 				while(itemIterator.hasNext()){
 					String itemName = itemIterator.next();
-					int index = wordDict.get(itemName);
-					newSvmMap.put(index, itemMap.get(itemName));
+					int index = -1;
+					if(wordsDict.containsKey(itemName)){
+						index = wordsDict.get(itemName);
+					}	
 //					System.out.print(index + ":" + itemMap.get(itemName) + " ");
 					writer.print(index + ":" + itemMap.get(itemName) + " ");
 				}
 				writer.println();
-				svmLabelMap.put(className, newSvmMap);
 			}
 			writer.flush();
 		} catch (Exception e) {
