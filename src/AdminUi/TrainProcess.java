@@ -146,7 +146,7 @@ public class TrainProcess extends BaseWordCut{
 				HashMap<String, Double> itemMap = tfIdfMap.get(file);
 				Iterator<String> itemIterator = itemMap.keySet().iterator();
 				writer.print(getClassLabel(file) + " ");
-				System.out.println(getClassLabel(file));
+				System.out.print(getClassLabel(file) + " ");
 				while(itemIterator.hasNext()){
 					String itemName = itemIterator.next();
 					int index = -1;
@@ -168,7 +168,8 @@ public class TrainProcess extends BaseWordCut{
 	public static void main(String[] args) throws Exception{
 		
 		TrainProcess model = new TrainProcess();
-		model.cutWord("article/");
+//		model.cutWord("article/");
+		model.cutWord("E:\\article\\");
 		model.makeDictionary(new File("trainfile/dictionary.txt"));//生成所有词的字典
 		model.convertToSvmFormat(new File("trainfile/svm.train"));//把语料转换成libsvm的模式
 	}

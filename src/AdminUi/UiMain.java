@@ -22,13 +22,13 @@ public class UiMain {
 		svm_scale scale = new svm_scale();
 		scale.main(sarg);
 		System.out.println("缩放结束");
+		
 		System.out.println("训练开始");
-		svm_train train = new svm_train();
-		svm_predict predict = new svm_predict();
-		train.main(arg);
+		svm_train.main(arg);
 		System.out.println("训练结束");
+		
 		System.out.println("分类开始");
-		predict.main(parg);
+		svm_predict.main(parg);
 		System.out.println("分类结束");
 		
 	}
