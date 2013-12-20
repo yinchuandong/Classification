@@ -48,31 +48,43 @@ public class TrainProcess extends BaseWordCut{
 		classLabel = loadClassFromFile(new File("trainfile/classLabel.txt"));
 	}
 	
+	/**
+	 * 从训练集中读取文件
+	 * @param path
+	 * @return
+	 * @throws Exception
+	 */
 	private HashMap<File, String> readFile(String path) throws Exception{
-		File directory = new File(path);
-		File[] files = directory.listFiles();
+		File baseDir = new File(path);
+		File[] catDir = baseDir.listFiles();
 		HashMap<File, String> articles = new HashMap<File,String>();
-		for (File file : files) {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			String temp = null;
-			String content = "";
-			while((temp = reader.readLine()) != null){
-				content += temp;
+		for (File dir : catDir) {
+			if(dir.isDirectory()){
+				File[] files = dir.listFiles();
+				for (File file : files) {
+					BufferedReader reader = new BufferedReader(new FileReader(file));
+					String temp = null;
+					String content = "";
+					while((temp = reader.readLine()) != null){
+						content += temp;
+					}
+					articles.put(file, content);
+				}
 			}
-			articles.put(file, content);
 		}
 		return articles;
 	}
 	
 	/**
-	 * 通过文件名获得类标号 如：政治_1.txt 对于的类别为“政治”
-	 * @param className
+	 * 通过文件获得类标号 如：政治_1.txt 对于的类别为“政治”
+	 * @param file 单个训练集文件的对象
 	 * @return
 	 */
-	private int getClassLabel(String className){
-		String[] arr = className.split("_");
-		if (classLabel.containsKey(arr[0])) {
-			return classLabel.get(arr[0]);
+	private int getClassLabel(File file){
+		//文件的目录即类别的名字
+		String className = file.getParentFile().getName();
+		if (classLabel.containsKey(className)) {
+			return classLabel.get(className);
 		}else{
 			return -1;
 		}
@@ -133,8 +145,8 @@ public class TrainProcess extends BaseWordCut{
 				//词项=>词频
 				HashMap<String, Double> itemMap = tfIdfMap.get(file);
 				Iterator<String> itemIterator = itemMap.keySet().iterator();
-				writer.print(getClassLabel(file.getName()) + " ");
-				System.out.println(getClassLabel(file.getName()));
+				writer.print(getClassLabel(file) + " ");
+				System.out.println(getClassLabel(file));
 				while(itemIterator.hasNext()){
 					String itemName = itemIterator.next();
 					int index = -1;
