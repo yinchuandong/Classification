@@ -120,10 +120,10 @@ public class WordCut extends BaseWordCut {
 					int index = -1;
 					if(wordsDict.containsKey(item)){
 						index = wordsDict.get(item);
+						double tfIdf = artWords.get(item);
+						//写入index和value
+						writer.print(index + ":" + tfIdf + " ");
 					}				
-					double tfIdf = artWords.get(item);
-					//写入index和value
-					writer.print(index + ":" + tfIdf + " ");
 				}
 				writer.println();//写入换行符
 			}

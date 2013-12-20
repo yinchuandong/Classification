@@ -27,9 +27,9 @@ public class UiMain {
 		svm_train.main(arg);
 		System.out.println("训练结束");
 		
-		System.out.println("分类开始");
-		svm_predict.main(parg);
-		System.out.println("分类结束");
+//		System.out.println("分类开始");
+//		svm_predict.main(parg);
+//		System.out.println("分类结束");
 		
 	}
 }
