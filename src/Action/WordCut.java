@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import svmHelper.svm_scale;
+
 import Base.BaseWordCut;
 import Helper.FileHelper;
 import Helper.TfIdfHelper;
@@ -143,16 +145,15 @@ public class WordCut extends BaseWordCut {
 		model.cutWord(files);
 		File outFile = new File("testfile/svm.test");
 		model.convertToSvmFormat(outFile);
+		//scale 参数
+		String[] sarg = {"-l","0","-r","trainfile/svm.scale","-o","testfile/svmscale.test","testfile/svm.test"};
+		svm_scale.main(sarg);
 		return outFile;
 	}
 	
 	public static void main(String[] args) throws Exception{
-		WordCut model = new WordCut();
-		model.cutWord(new File[]{
-				new File("article/政治_1.txt"),
-				new File("article/政治_2.txt")
-				});
-		model.convertToSvmFormat(new File("testfile/svm.test"));
+		File[] files = new File[]{new File("article/政治_1.txt"),new File("article/政治_2.txt")};
+		run(files);
 	}
 	
 	

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import svmHelper.svm_predict;
+import svmHelper.svm_scale;
 
 public class Classfy {
 
@@ -17,8 +18,7 @@ public class Classfy {
 	 */
 	public static ArrayList<Double> run() throws IOException{
 		String[] parg = {"testfile/svm.test","trainfile/svm.model","testfile/result.txt"};
-		svm_predict predict = new svm_predict();
-		predict.main(parg);
+		svm_predict.main(parg);
 		ArrayList<Double> result = new ArrayList<Double>();
 		File file = new File("testfile/result.txt");
 		BufferedReader reader = new BufferedReader(new FileReader(file));

@@ -7,7 +7,7 @@ import libsvm.svm_parameter;
 import libsvm.svm_problem;
 
 import svmHelper.*;
-public class Index {
+public class Test {
 
     /**
      * @param args
