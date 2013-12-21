@@ -153,9 +153,9 @@ public class WordCut extends BaseWordCut {
 	
 	public static void main(String[] args) throws Exception{
 		File[] files = new File[]{
-				new File("article/政治/政治_1.txt"),
-				new File("article/政治/政治_2.txt"),
-				new File("article/政治/文学艺术_3.txt")
+				new File("article/政治/政治法律_1.txt"),
+				new File("article/政治/政治法律_2.txt"),
+				new File("article/政治/艺术_3.txt")
 				};
 		run(files);
 	}

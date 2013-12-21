@@ -28,7 +28,13 @@ import Helper.FileHelper;
 import Helper.TfIdfHelper;
 import ICTCLAS.I3S.AC.ICTCLAS50;
 
+/**
+ * 后台用来生成训练集，直接运行即可
+ * @author Administrator
+ *
+ */
 public class TrainProcess extends BaseWordCut{
+	public static int curFileIndex = 1;//现在读取的文件
 	/**
 	 * 所有训练集分词后的map
 	 */
@@ -61,6 +67,7 @@ public class TrainProcess extends BaseWordCut{
 		for (File dir : catDir) {
 			if(dir.isDirectory()){
 				File[] files = dir.listFiles();
+				System.out.print(dir.getName()+" ");
 				for (File file : files) {
 					BufferedReader reader = new BufferedReader(new FileReader(file));
 					String temp = null;
@@ -69,7 +76,10 @@ public class TrainProcess extends BaseWordCut{
 						content += temp;
 					}
 					articles.put(file, content);
+					System.out.print(curFileIndex+" ");
+					curFileIndex++;
 				}
+				System.out.println();
 			}
 		}
 		return articles;

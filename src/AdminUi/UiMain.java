@@ -7,6 +7,11 @@ import svmHelper.svm_predict;
 import svmHelper.svm_scale;
 import svmHelper.svm_train;
 
+/**
+ * 后台用的生成模型，直接运行即可
+ * @author Administrator
+ *
+ */
 public class UiMain {
 
 	@SuppressWarnings("static-access")
