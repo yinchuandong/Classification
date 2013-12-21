@@ -81,6 +81,21 @@ public class WordCut extends BaseWordCut {
 	}
 	
 	/**
+	 * 通过文件的父目录获得类标号 如：政治/1.txt 对于的类别为“政治”
+	 * @param className
+	 * @return
+	 */
+	private int getClassLabel(File file){
+		//文件的目录即类别的名字
+		String className = file.getParentFile().getName();
+		if (classLabel.containsKey(className)) {
+			return classLabel.get(className);
+		}else{
+			return -1;
+		}
+	}
+	
+	/**
 	 * 对所有文章进行分词处理
 	 * @param files
 	 * @throws Exception
@@ -111,8 +126,9 @@ public class WordCut extends BaseWordCut {
 			while (artIterator.hasNext()) {
 				File file = artIterator.next();
 				//写入svm语料的类别号
-				writer.print(getClassLabel(file.getName()) + " ");
-				
+				writer.print(getClassLabel(file) + " ");
+//				writer.print(getClassLabel(file.getName()) + " ");
+//				System.out.println(file.getParentFile().getName()+" ");
 				HashMap<String, Double> artWords = tfIdfMap.get(file);
 				Iterator<String> wordsIterator = artWords.keySet().iterator();
 				while (wordsIterator.hasNext()) {
@@ -153,9 +169,9 @@ public class WordCut extends BaseWordCut {
 	
 	public static void main(String[] args) throws Exception{
 		File[] files = new File[]{
-				new File("article/政治/政治法律_1.txt"),
-				new File("article/政治/政治法律_2.txt"),
-				new File("article/政治/艺术_3.txt")
+				new File("article/政治法律/1.txt"),
+				new File("article/政治法律/2.txt"),
+				new File("article/艺术/1.txt")
 				};
 		run(files);
 	}
