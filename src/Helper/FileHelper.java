@@ -88,6 +88,14 @@ public class FileHelper {
 		return result;
 	}
 	
+	public static String getFileExt(File file){
+		String[] arr = file.getName().split("\\.");
+		return arr[arr.length-1];
+	}
+	
+	public static void copyFile(File source, File dest){
+		
+	}
 	
 	public static void main(String[] args){
 		try {
