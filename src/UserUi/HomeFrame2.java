@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.JProgressBar;
 import javax.swing.JList;
@@ -42,6 +43,7 @@ import Action.WordCut;
 import Helper.FileHelper;
 
 import java.awt.GridLayout;
+import javax.swing.ListSelectionModel;
 
 public class HomeFrame2 extends JFrame {
 
@@ -86,14 +88,13 @@ public class HomeFrame2 extends JFrame {
 	 */
 	public HomeFrame2() {
 		initComponents();
-		initData();
+//		initData();
 		bindChooseBtnEvent();
 		bindStartBtnEvent();
 		bindClassListEvent();
 	}
 	
 	private void initData(){
-		classListModel = new DefaultListModel<String>();
 		ArrayList<File> list1=new ArrayList<File>();
 		list1.add(new File("F:\\1.txt"));
 		list1.add(new File("F:\\2.txt"));
@@ -120,6 +121,21 @@ public class HomeFrame2 extends JFrame {
 		resultMap.put("政治", list1);
 		resultMap.put("体育", list2);
 		resultMap.put("文学", list3);
+		
+		
+	}
+	
+	/**
+	 * 更新左侧分类查看器列表
+	 */
+	private void updateClassList(){
+		classListModel = new DefaultListModel<String>();
+		Iterator<String> iterator = resultMap.keySet().iterator();
+		while (iterator.hasNext()) {
+			String className = (String) iterator.next();
+			classListModel.addElement(className);
+		}
+		classList.setModel(classListModel);
 	}
 	
 	/**
@@ -131,9 +147,9 @@ public class HomeFrame2 extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser chooser = new JFileChooser();
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt&doc","txt","doc");
 				chooser.setFileFilter(filter);
-				chooser.setCurrentDirectory(new File("E:\\android\\windows\\Classification\\trainfile"));
+				chooser.setCurrentDirectory(new File("E:\\android\\windows\\Classification\\article"));
 				chooser.setMultiSelectionEnabled(true);
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				int result = chooser.showOpenDialog(null);
@@ -149,11 +165,51 @@ public class HomeFrame2 extends JFrame {
 	}
 	
 	/**
+	 * 开始分类按钮事件
+	 */
+	private void bindStartBtnEvent(){
+		startBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Thread(){
+					public void run(){
+						try {
+							//进行分词
+							WordCut.run(userFiles);
+							//进行分类
+							resultMap = Classfy.run(userFiles);
+							//更新左侧分类查看器
+							updateClassList();
+							//分类完成时移除右侧面板显示的文件
+							updateViewPanel(new File[]{});
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+					}
+				}.start();
+			}
+		});
+	}
+	
+	private void bindClassListEvent(){
+		classList.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				String className = (String)classList.getSelectedValue();
+				updateViewPanel(resultMap.get(className).toArray(new File[]{}));
+			}
+		});
+	}
+	
+	/**
 	 * 更新文件显示区域的ui
 	 * @param files
 	 */
 	private void updateViewPanel(File[] files){
-		int height = ((files.length / 5) + 1) * 120;
+		int height = ((files.length / 5) + 1) * 140;
+		viewPanel = new JPanel();
+		scrollPane.setViewportView(viewPanel);
 		viewPanel.setPreferredSize(new Dimension(400, height));
 		viewPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		viewPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -174,34 +230,9 @@ public class HomeFrame2 extends JFrame {
 		repaint();
 	}
 	
-	private void bindStartBtnEvent(){
-		startBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					//进行分词
-					WordCut.run(userFiles);
-					//进行分类
-					Classfy.run();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	private void bindClassListEvent(){
-		classList.addListSelectionListener(new ListSelectionListener() {
-			
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-			
-			}
-		});
-	}
-	
+	/**
+	 * 初始化控件布局
+	 */
 	private void initComponents(){
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
@@ -221,6 +252,7 @@ public class HomeFrame2 extends JFrame {
 		progressBar = new JProgressBar();
 		
 		classList = new JList();
+		classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		scrollPane = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);

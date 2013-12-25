@@ -159,8 +159,8 @@ public class WordCut extends BaseWordCut {
 	public static File run(File[] files) throws Exception{
 		WordCut model = new WordCut();
 		model.cutWord(files);
-		File outFile = new File("testfile/svm.test");
-		model.convertToSvmFormat(outFile);
+		File outFile = new File("testfile/svmscale.test");
+		model.convertToSvmFormat(new File("testfile/svm.test"));
 		//scale ²ÎÊý
 		String[] sarg = {"-l","0","-r","trainfile/svm.scale","-o","testfile/svmscale.test","testfile/svm.test"};
 		svm_scale.main(sarg);
