@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -93,8 +94,14 @@ public class FileHelper {
 		return arr[arr.length-1];
 	}
 	
-	public static void copyFile(File source, File dest){
-		
+	public static void copyFile(File source, File dest) throws IOException{
+		BufferedReader reader = new BufferedReader(new FileReader(source));
+		PrintWriter writer = new PrintWriter(dest);
+		String temp = null;
+		while((temp = reader.readLine()) != null){
+			writer.println(temp);
+		}
+		writer.flush();
 	}
 	
 	public static void main(String[] args){

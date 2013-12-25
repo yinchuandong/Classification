@@ -16,6 +16,7 @@ import svmHelper.svm_scale;
 import Base.BaseWordCut;
 import Helper.FileHelper;
 import Helper.TfIdfHelper;
+import UserUi.HomeFrame;
 
 public class WordCut extends BaseWordCut {
 	/**
@@ -34,8 +35,12 @@ public class WordCut extends BaseWordCut {
 	private HashMap<String, Integer> wordsDict = new HashMap<String, Integer>();
 	
 	private HashMap<String, Integer> classLabel = new HashMap<String, Integer>();
-	
-	public WordCut() throws IOException{
+	/**
+	 * 主界面对象
+	 */
+	private HomeFrame homeFrame = null; 	
+	public WordCut(HomeFrame homeFrame) throws IOException{
+		this.homeFrame = homeFrame;
 		this.loadWordsDict(new File("trainfile/dictionary.txt"));
 		this.classLabel = super.loadClassFromFile(new File("trainfile/classLabel.txt"));
 	}
@@ -58,10 +63,15 @@ public class WordCut extends BaseWordCut {
 	}
 	
 	private HashMap<File, String> readFile(File[] files) throws Exception{
+		int curIndex = 0;
 		HashMap<File, String> articles = new HashMap<File, String>();
 		for (File file : files) {
 			String content = FileHelper.readTxtOrDoc(file);
 			articles.put(file, content);
+			curIndex ++;
+			if(homeFrame != null){
+				homeFrame.updateProgressBar(curIndex);
+			}
 		}
 		return articles;
 	}
@@ -156,8 +166,8 @@ public class WordCut extends BaseWordCut {
 	 * @return 返回生成的svm.test语料文件
 	 * @throws Exception
 	 */
-	public static File run(File[] files) throws Exception{
-		WordCut model = new WordCut();
+	public static File run(File[] files,HomeFrame homeFrame) throws Exception{
+		WordCut model = new WordCut(homeFrame);
 		model.cutWord(files);
 		File outFile = new File("testfile/svmscale.test");
 		model.convertToSvmFormat(new File("testfile/svm.test"));
@@ -173,7 +183,7 @@ public class WordCut extends BaseWordCut {
 				new File("article/政治法律/2.txt"),
 				new File("article/艺术/1.txt")
 				};
-		run(files);
+		run(files,null);
 	}
 	
 	
