@@ -73,8 +73,7 @@ public class FileHelper {
 	 * @throws Exception
 	 */
 	public static String readTxtOrDoc(File file) throws Exception{
-		String[] name = file.getName().split("\\.");
-		String ext = name[name.length-1];
+		String ext = getFileExt(file);
 		String result = "";
 		switch (ext) {
 		case "txt":
@@ -91,7 +90,7 @@ public class FileHelper {
 	
 	public static String getFileExt(File file){
 		String[] arr = file.getName().split("\\.");
-		return arr[arr.length-1];
+		return arr[arr.length-1].toLowerCase();
 	}
 	
 	public static void copyFile(File source, File dest) throws IOException{

@@ -3,6 +3,7 @@ package UserUi;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -36,6 +37,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,9 +81,9 @@ public class HomeFrame extends JFrame {
 	private JLabel progressLabel; //进度百分比
 	private JMenuBar menuBar;
 	private JMenu mnNewMenu;
-	private JMenuItem mntmNewMenuItem;
-	private JMenuItem mntmNewMenuItem_1;
-	private JMenuItem mntmNewMenuItem_2;
+	private JMenuItem helpMenu;
+	private JMenuItem checkNewMenu;
+	private JMenuItem aboutMenu;
 
 	private JPopupMenu popupMenu;
 	
@@ -122,6 +128,7 @@ public class HomeFrame extends JFrame {
 	}
 	
 	private void initData(){
+		bindMenuBarEvent();
 		bindPopMenuEvent();
 		bindChooseBtnEvent();
 		bindClearBtnEvent();
@@ -163,7 +170,7 @@ public class HomeFrame extends JFrame {
 	 */
 	private void updateViewPanel(ArrayList<File> files){
 		int len = (files == null) ? 0 : files.size();
-		int height = ((len / 5) + 1) * 140;
+		int height = ((len / 5) + 1) * 125;
 		viewPanel = new JPanel();
 		scrollPane.setViewportView(viewPanel);
 		viewPanel.setPreferredSize(new Dimension(400, height));
@@ -207,6 +214,59 @@ public class HomeFrame extends JFrame {
 			System.out.println(button.getText());
 		}
 		repaint();
+	}
+	
+	/**
+	 * 绑定顶部菜单栏的事件
+	 */
+	private void bindMenuBarEvent(){
+		//帮助按钮
+		helpMenu.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Desktop desktop = Desktop.getDesktop();
+					desktop.browse(new URI("http://192.168.233.15:90/classify/static/help.html"));
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
+					ex.printStackTrace();
+				}
+			}
+		});
+		
+		//检查更新
+		checkNewMenu.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					URI url = new URI("http://192.168.233.15:90/classify/static/checkNew.html");
+					Desktop desktop = Desktop.getDesktop();
+					desktop.browse(url);
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		//关于我们的按钮
+		aboutMenu.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					URI url = new URI("http://192.168.233.15:90/classify/static/about.html");
+					Desktop desktop = Desktop.getDesktop();
+					desktop.browse(url);
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
+					e1.printStackTrace();
+				}
+			}
+		});
+		
 	}
 	
 	/**
@@ -259,7 +319,7 @@ public class HomeFrame extends JFrame {
 				JFileChooser chooser = new JFileChooser();
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt&doc","txt","doc");
 				chooser.setFileFilter(filter);
-				chooser.setCurrentDirectory(new File("E:\\android\\windows\\Classification\\article"));
+				chooser.setCurrentDirectory(new File("E:\\article"));//E:\\android\\windows\\Classification\\article
 				chooser.setMultiSelectionEnabled(true);
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				int result = chooser.showOpenDialog(null);
@@ -421,6 +481,7 @@ public class HomeFrame extends JFrame {
 	 * 初始化控件布局
 	 */
 	private void initComponents(){
+		setTitle("超级文本自动分类系统");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 466);
 		
@@ -430,14 +491,14 @@ public class HomeFrame extends JFrame {
 		mnNewMenu = new JMenu("\u83DC\u5355");
 		menuBar.add(mnNewMenu);
 		
-		mntmNewMenuItem = new JMenuItem("\u5E2E\u52A9");
-		mnNewMenu.add(mntmNewMenuItem);
+		helpMenu = new JMenuItem("\u5E2E\u52A9");
+		mnNewMenu.add(helpMenu);
 		
-		mntmNewMenuItem_1 = new JMenuItem("\u68C0\u67E5\u66F4\u65B0");
-		mnNewMenu.add(mntmNewMenuItem_1);
+		checkNewMenu = new JMenuItem("\u68C0\u67E5\u66F4\u65B0");
+		mnNewMenu.add(checkNewMenu);
 		
-		mntmNewMenuItem_2 = new JMenuItem("\u5173\u4E8E\u6211\u4EEC");
-		mnNewMenu.add(mntmNewMenuItem_2);
+		aboutMenu = new JMenuItem("\u5173\u4E8E\u6211\u4EEC");
+		mnNewMenu.add(aboutMenu);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -461,7 +522,7 @@ public class HomeFrame extends JFrame {
 		stopBtn = new JButton("\u505C\u6B62\u5206\u7C7B");
 		stopBtn.setEnabled(false);
 		
-		clearBtn = new JButton("\u6E05\u7A7A\u5DF2\u9009");
+		clearBtn = new JButton("\u6E05\u7A7A\u6240\u6709");
 		clearBtn.setEnabled(false);
 		
 		progressLabel = new JLabel("0%");
@@ -487,9 +548,9 @@ public class HomeFrame extends JFrame {
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(exportBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE))
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(classList, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE)
+									.addComponent(classList, GroupLayout.PREFERRED_SIZE, 156, GroupLayout.PREFERRED_SIZE)
 									.addGap(18)
-									.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+									.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 479, GroupLayout.PREFERRED_SIZE)
 									.addGap(11))))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(progressBar, GroupLayout.PREFERRED_SIZE, 586, GroupLayout.PREFERRED_SIZE)
@@ -509,8 +570,8 @@ public class HomeFrame extends JFrame {
 						.addComponent(clearBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
-						.addComponent(classList, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE))
+						.addComponent(classList, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE))
 					.addGap(9)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -521,6 +582,13 @@ public class HomeFrame extends JFrame {
 		viewPanel = new JPanel();
 		scrollPane.setViewportView(viewPanel);
 		contentPane.setLayout(gl_contentPane);
+		
+		//设置jframe背景图片
+		ImageIcon bgImg = new ImageIcon("image/background2.jpg");
+		JLabel label = new JLabel(bgImg);
+		label.setBounds(0,0,bgImg.getIconWidth(),bgImg.getIconHeight());
+		contentPane.setOpaque(false);
+		getLayeredPane().add(label,new Integer(Integer.MIN_VALUE));
 	
 	}
 }
