@@ -16,6 +16,7 @@ import svmHelper.svm_scale;
 import Base.BaseWordCut;
 import Helper.FileHelper;
 import Helper.TfIdfHelper;
+import UserUi.HomeFrame;
 
 public class WordCut extends BaseWordCut {
 	/**
@@ -34,8 +35,12 @@ public class WordCut extends BaseWordCut {
 	private HashMap<String, Integer> wordsDict = new HashMap<String, Integer>();
 	
 	private HashMap<String, Integer> classLabel = new HashMap<String, Integer>();
-	
-	public WordCut() throws IOException{
+	/**
+	 * 主界面对象
+	 */
+	private HomeFrame homeFrame = null; 	
+	public WordCut(HomeFrame homeFrame) throws IOException{
+		this.homeFrame = homeFrame;
 		this.loadWordsDict(new File("trainfile/dictionary.txt"));
 		this.classLabel = super.loadClassFromFile(new File("trainfile/classLabel.txt"));
 	}
@@ -58,10 +63,15 @@ public class WordCut extends BaseWordCut {
 	}
 	
 	private HashMap<File, String> readFile(File[] files) throws Exception{
+		int curIndex = 0;
 		HashMap<File, String> articles = new HashMap<File, String>();
 		for (File file : files) {
 			String content = FileHelper.readTxtOrDoc(file);
 			articles.put(file, content);
+			curIndex ++;
+			if(homeFrame != null){
+				homeFrame.updateProgressBar(curIndex);
+			}
 		}
 		return articles;
 	}
@@ -75,6 +85,21 @@ public class WordCut extends BaseWordCut {
 		String[] arr = className.split("_");
 		if (classLabel.containsKey(arr[0])) {
 			return classLabel.get(arr[0]);
+		}else{
+			return -1;
+		}
+	}
+	
+	/**
+	 * 通过文件的父目录获得类标号 如：政治/1.txt 对于的类别为“政治”
+	 * @param className
+	 * @return
+	 */
+	private int getClassLabel(File file){
+		//文件的目录即类别的名字
+		String className = file.getParentFile().getName();
+		if (classLabel.containsKey(className)) {
+			return classLabel.get(className);
 		}else{
 			return -1;
 		}
@@ -111,8 +136,9 @@ public class WordCut extends BaseWordCut {
 			while (artIterator.hasNext()) {
 				File file = artIterator.next();
 				//写入svm语料的类别号
-				writer.print(getClassLabel(file.getName()) + " ");
-				
+				writer.print(getClassLabel(file) + " ");
+//				writer.print(getClassLabel(file.getName()) + " ");
+//				System.out.println(file.getParentFile().getName()+" ");
 				HashMap<String, Double> artWords = tfIdfMap.get(file);
 				Iterator<String> wordsIterator = artWords.keySet().iterator();
 				while (wordsIterator.hasNext()) {
@@ -140,11 +166,11 @@ public class WordCut extends BaseWordCut {
 	 * @return 返回生成的svm.test语料文件
 	 * @throws Exception
 	 */
-	public static File run(File[] files) throws Exception{
-		WordCut model = new WordCut();
+	public static File run(File[] files,HomeFrame homeFrame) throws Exception{
+		WordCut model = new WordCut(homeFrame);
 		model.cutWord(files);
-		File outFile = new File("testfile/svm.test");
-		model.convertToSvmFormat(outFile);
+		File outFile = new File("testfile/svmscale.test");
+		model.convertToSvmFormat(new File("testfile/svm.test"));
 		//scale 参数
 		String[] sarg = {"-l","0","-r","trainfile/svm.scale","-o","testfile/svmscale.test","testfile/svm.test"};
 		svm_scale.main(sarg);
@@ -153,11 +179,11 @@ public class WordCut extends BaseWordCut {
 	
 	public static void main(String[] args) throws Exception{
 		File[] files = new File[]{
-				new File("article/政治/政治法律_1.txt"),
-				new File("article/政治/政治法律_2.txt"),
-				new File("article/政治/艺术_3.txt")
+				new File("article/政治法律/1.txt"),
+				new File("article/政治法律/2.txt"),
+				new File("article/艺术/1.txt")
 				};
-		run(files);
+		run(files,null);
 	}
 	
 	

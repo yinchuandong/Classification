@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class FileHelper {
 		String temp = null;
 		String content = "";
 		while((temp = reader.readLine()) != null){
-			content += temp;
+			content += temp + "\n";
 		}
 		return content;
 	}
@@ -88,6 +89,20 @@ public class FileHelper {
 		return result;
 	}
 	
+	public static String getFileExt(File file){
+		String[] arr = file.getName().split("\\.");
+		return arr[arr.length-1];
+	}
+	
+	public static void copyFile(File source, File dest) throws IOException{
+		BufferedReader reader = new BufferedReader(new FileReader(source));
+		PrintWriter writer = new PrintWriter(dest);
+		String temp = null;
+		while((temp = reader.readLine()) != null){
+			writer.println(temp);
+		}
+		writer.flush();
+	}
 	
 	public static void main(String[] args){
 		try {
