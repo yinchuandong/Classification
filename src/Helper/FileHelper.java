@@ -61,7 +61,7 @@ public class FileHelper {
 		String temp = null;
 		String content = "";
 		while((temp = reader.readLine()) != null){
-			content += temp;
+			content += temp + "\n";
 		}
 		return content;
 	}
