@@ -53,6 +53,7 @@ import javax.swing.JScrollPane;
 
 import Action.Classfy;
 import Action.WordCut;
+import Helper.AppHelper;
 import Helper.FileHelper;
 
 import java.awt.GridLayout;
@@ -65,10 +66,12 @@ import org.apache.poi.util.TempFile;
 
 import Widget.ImageButton;
 import javax.swing.JLabel;
+import java.awt.Font;
 
 public class HomeFrame extends JFrame {
 
 	private JPanel contentPane;
+	private JLabel countsLabel;
 	private JButton chooseBtn;
 	private JButton clearBtn;
 	private JButton startBtn;
@@ -151,6 +154,10 @@ public class HomeFrame extends JFrame {
 		}
 	}
 	
+	private void updateSelectedCounts(){
+		countsLabel.setText("已选择"+userFiles.size()+"个文件");
+	}
+	
 	/**
 	 * 更新左侧分类查看器列表
 	 */
@@ -183,7 +190,9 @@ public class HomeFrame extends JFrame {
 		scrollPane.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e){
-				popupMenu.show(scrollPane, e.getX(), e.getY());
+				if(e.isMetaDown()){
+					popupMenu.show(scrollPane, e.getX(), e.getY());
+				}
 			}
 		});
 
@@ -235,7 +244,7 @@ public class HomeFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Desktop desktop = Desktop.getDesktop();
-					desktop.browse(new URI("http://192.168.233.15:90/classify/static/help.html"));
+					desktop.browse(new URI("http://192.168.233.15:90/classify/static/index.html#help"));
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
 					ex.printStackTrace();
@@ -249,9 +258,20 @@ public class HomeFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					URI url = new URI("http://192.168.233.15:90/classify/static/checkNew.html");
-					Desktop desktop = Desktop.getDesktop();
-					desktop.browse(url);
+					if (!AppHelper.checkNewVersion()) {
+						JOptionPane.showMessageDialog(HomeFrame.this, "已经是最新版本");
+					}else {
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									CheckNewFrame frame = new CheckNewFrame();
+									frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
 					e1.printStackTrace();
@@ -265,7 +285,7 @@ public class HomeFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					URI url = new URI("http://192.168.233.15:90/classify/static/about.html");
+					URI url = new URI("http://192.168.233.15:90/classify/static/index.html#aboutus");
 					Desktop desktop = Desktop.getDesktop();
 					desktop.browse(url);
 				} catch (Exception e1) {
@@ -308,6 +328,7 @@ public class HomeFrame extends JFrame {
 				if (selectedFile != null) {
 					userFiles.remove(selectedFile);
 					updateViewPanel(userFiles);
+					updateSelectedCounts();
 					selectedFile = null;
 					progressBar.setMaximum(userFiles.size()+classiyProgress);
 				}
@@ -343,6 +364,7 @@ public class HomeFrame extends JFrame {
 						}
 					}
 					updateViewPanel(userFiles);
+					updateSelectedCounts();
 					progressBar.setMaximum(userFiles.size() + classiyProgress);
 					progressBar.setMinimum(0);
 					progressBar.setValue(0);
@@ -364,6 +386,7 @@ public class HomeFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				userFiles.clear();
 				updateViewPanel(null);
+				updateSelectedCounts();
 				startBtn.setEnabled(false);
 			}
 		});
@@ -537,13 +560,30 @@ public class HomeFrame extends JFrame {
 		progressLabel.setForeground(Color.RED);
 		progressLabel.setVisible(false);
 		
+		countsLabel = new JLabel("\u5DF2\u9009\u62E90\u4E2A\u6587\u4EF6");
+		countsLabel.setFont(new Font("SimSun", Font.PLAIN, 14));
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+					.addComponent(progressBar, GroupLayout.DEFAULT_SIZE, 623, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(progressLabel)
+					.addGap(39))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(classList, GroupLayout.PREFERRED_SIZE, 156, GroupLayout.PREFERRED_SIZE)
+							.addGap(18))
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(countsLabel)
+							.addGap(10)))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 479, GroupLayout.PREFERRED_SIZE)
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 							.addComponent(chooseBtn)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addComponent(clearBtn)
@@ -552,30 +592,26 @@ public class HomeFrame extends JFrame {
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addComponent(stopBtn)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(exportBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(classList, GroupLayout.PREFERRED_SIZE, 156, GroupLayout.PREFERRED_SIZE)
-							.addGap(18)
-							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 479, GroupLayout.PREFERRED_SIZE)))
-					.addGap(11)
+							.addComponent(exportBtn, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addComponent(progressBar, GroupLayout.DEFAULT_SIZE, 623, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(progressLabel)
-					.addGap(39))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(31)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(exportBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-						.addComponent(stopBtn, GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-						.addComponent(startBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-						.addComponent(chooseBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-						.addComponent(clearBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))
-					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(31)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(exportBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+								.addComponent(stopBtn, GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+								.addComponent(startBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+								.addComponent(chooseBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+								.addComponent(clearBtn, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))
+							.addGap(18))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(countsLabel)
+							.addGap(18)))
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(classList, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE))

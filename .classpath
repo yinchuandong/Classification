@@ -11,6 +11,12 @@
 	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/ooxml-lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/ooxml-lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/ooxml-lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/json/commons-beanutils-1.8.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/json/commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/json/commons-lang-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/json/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/json/ezmorph-1.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/android/windows/Classification/libs/json/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="output" path="bin"/>
