@@ -25,7 +25,7 @@ public class AppHelper {
 		JSONObject local = JSONObject.fromObject(localStr);
 		String localVersion = local.getString("version");
 		String serverVersion = server.getString("version");
-		if (localVersion.equals(serverVersion)) {
+		if (!localVersion.equals(serverVersion)) {
 			return true;
 		}else{
 			return false;
