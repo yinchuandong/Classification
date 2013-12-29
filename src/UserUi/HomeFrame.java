@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -179,9 +180,16 @@ public class HomeFrame extends JFrame {
 		if (files == null) {
 			return ;
 		}
+		scrollPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				popupMenu.show(scrollPane, e.getX(), e.getY());
+			}
+		});
+
 		for (File file : files) {
 			
-			ImageButton button = new ImageButton(file);
+			final ImageButton button = new ImageButton(file);
 			button.setText(file.getName());
 			button.setPreferredSize(new Dimension(82, 120));
 			if(FileHelper.getFileExt(file).equals("doc")){
@@ -203,10 +211,8 @@ public class HomeFrame extends JFrame {
 					}else{
 						if (e.isMetaDown()) {
 							selectedFile = tmpFile;
-							ImageButton clickBtn =  (ImageButton)e.getSource();
-							int left = clickBtn.getX() + scrollPane.getX();
-							int top = clickBtn.getY() + scrollPane.getY() + clickBtn.getHeight();
-							popupMenu.show(HomeFrame.this, left, top);
+							//button 向 scrollpane传递事件
+							scrollPane.dispatchEvent(SwingUtilities.convertMouseEvent(button, e, scrollPane));
 						}
 					}
 				}
@@ -215,6 +221,8 @@ public class HomeFrame extends JFrame {
 		}
 		repaint();
 	}
+	
+	
 	
 	/**
 	 * 绑定顶部菜单栏的事件
