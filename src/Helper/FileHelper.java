@@ -5,7 +5,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -43,7 +45,7 @@ public class FileHelper {
 	 * @throws IOException 
 	 * @throws Exception
 	 */
-	private static String readDoc(File file) throws IOException {
+	public static String readDoc(File file) throws IOException {
 		InputStream stream = new FileInputStream(file);
 		WordExtractor extractor = new WordExtractor(stream);
 		return extractor.getText();
@@ -56,7 +58,7 @@ public class FileHelper {
 	 * @throws IOException 
 	 * @throws Exception
 	 */
-	private static String readTxt(File file) throws IOException {
+	public static String readTxt(File file) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String temp = null;
 		String content = "";
@@ -94,13 +96,22 @@ public class FileHelper {
 	}
 	
 	public static void copyFile(File source, File dest) throws IOException{
-		BufferedReader reader = new BufferedReader(new FileReader(source));
-		PrintWriter writer = new PrintWriter(dest);
-		String temp = null;
-		while((temp = reader.readLine()) != null){
-			writer.println(temp);
+//		BufferedReader reader = new BufferedReader(new FileReader(source));
+//		PrintWriter writer = new PrintWriter(dest);
+//		String temp = null;
+//		while((temp = reader.readLine()) != null){
+//			writer.println(temp);
+//		}
+//		writer.flush();
+		FileInputStream input = new FileInputStream(source);
+		FileOutputStream output = new FileOutputStream(dest);
+		byte[] buff = new byte[4096];
+		int len = 0;
+		while((len = input.read(buff)) != -1){
+			output.write(buff, 0, len);
 		}
-		writer.flush();
+		input.close();
+		output.close();
 	}
 	
 	public static void main(String[] args){

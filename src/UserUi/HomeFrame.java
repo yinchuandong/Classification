@@ -53,6 +53,7 @@ import javax.swing.JScrollPane;
 
 import Action.Classfy;
 import Action.WordCut;
+import Helper.AppHelper;
 import Helper.FileHelper;
 
 import java.awt.GridLayout;
@@ -243,7 +244,7 @@ public class HomeFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Desktop desktop = Desktop.getDesktop();
-					desktop.browse(new URI("http://192.168.233.15:90/classify/static/help.html"));
+					desktop.browse(new URI("http://192.168.233.15:90/classify/static/index.html#help"));
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
 					ex.printStackTrace();
@@ -257,9 +258,20 @@ public class HomeFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					URI url = new URI("http://192.168.233.15:90/classify/static/checkNew.html");
-					Desktop desktop = Desktop.getDesktop();
-					desktop.browse(url);
+					if (!AppHelper.checkNewVersion()) {
+						JOptionPane.showMessageDialog(HomeFrame.this, "已经是最新版本");
+					}else {
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									CheckNewFrame frame = new CheckNewFrame();
+									frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
 					e1.printStackTrace();
@@ -273,7 +285,7 @@ public class HomeFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					URI url = new URI("http://192.168.233.15:90/classify/static/about.html");
+					URI url = new URI("http://192.168.233.15:90/classify/static/index.html#aboutus");
 					Desktop desktop = Desktop.getDesktop();
 					desktop.browse(url);
 				} catch (Exception e1) {
