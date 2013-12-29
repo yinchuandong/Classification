@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Sat Dec 28 10:23:45 CST 2013
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=E\:\\android\\windows\\Classification\\Classification_fat.jar
+manifest.mergeall=true
+manifest.mainclass=UserUi.HomeFrame
+manifest.file=<createnew>
+jarname.isextern=true
+onejar.expand=
+excludes=
+includes=
