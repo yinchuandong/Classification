@@ -51,6 +51,7 @@ public class Classfy {
 		if (classMap.containsKey(label)) {
 			return classMap.get(label);
 		}else{
+			System.out.println(label);
 			return "ÆäËü";
 		}
 	}

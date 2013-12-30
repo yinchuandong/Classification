@@ -65,6 +65,9 @@ public class FileHelper {
 		while((temp = reader.readLine()) != null){
 			content += temp + "\n";
 		}
+		String charset = judgeEncode(content);
+		System.out.println(charset);
+//		content = new String(content.getBytes(charset),"utf-8");
 		return content;
 	}
 	
@@ -118,7 +121,16 @@ public class FileHelper {
 		try {
 			String text = readTxtOrDoc(new File("E:\\android\\windows\\Classification\\article\\ÕþÖÎ_1.txt"));
 			System.out.println(text);
-			
+//			FileInputStream input = new FileInputStream(new File("E:\\article\\15.txt"));
+//			FileOutputStream output = new FileOutputStream(new File("E:\\article\\15_1.txt"));
+//			byte[] buff = new byte[4096];
+//			int len = 0;
+//			while((len = input.read(buff)) != -1){
+//				buff = (new String(buff,"utf-8") + "\n").getBytes("gbk");
+//				output.write(buff);
+//			}
+//			input.close();
+//			output.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

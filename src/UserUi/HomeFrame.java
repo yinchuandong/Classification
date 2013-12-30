@@ -166,7 +166,7 @@ public class HomeFrame extends JFrame {
 		Iterator<String> iterator = resultMap.keySet().iterator();
 		while (iterator.hasNext()) {
 			String className = (String) iterator.next();
-			classListModel.addElement(className);
+			classListModel.addElement(className + "(" + resultMap.get(className).size()+ ")");
 		}
 		classList.setModel(classListModel);
 	}
@@ -258,20 +258,26 @@ public class HomeFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if (!AppHelper.checkNewVersion()) {
-						JOptionPane.showMessageDialog(HomeFrame.this, "已经是最新版本");
-					}else {
-						EventQueue.invokeLater(new Runnable() {
-							public void run() {
-								try {
-									CheckNewFrame frame = new CheckNewFrame();
-									frame.setVisible(true);
-								} catch (Exception e) {
-									e.printStackTrace();
+					
+					new Thread(){
+						public void run(){
+							try {
+								if (!AppHelper.checkNewVersion()) {
+									JOptionPane.showMessageDialog(HomeFrame.this, "已经是最新版本");
+								}else {
+									EventQueue.invokeLater(new Runnable() {
+										public void run() {
+											CheckNewFrame frame = new CheckNewFrame();
+											frame.setVisible(true);
+										}
+									});
 								}
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-						});
-					}
+						}
+					}.start();
+					
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(HomeFrame.this, "网络连接中断");
 					e1.printStackTrace();
@@ -348,7 +354,7 @@ public class HomeFrame extends JFrame {
 				JFileChooser chooser = new JFileChooser();
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt&doc","txt","doc");
 				chooser.setFileFilter(filter);
-				chooser.setCurrentDirectory(new File("E:\\article"));//E:\\android\\windows\\Classification\\article
+				chooser.setCurrentDirectory(new File("E:\\"));//E:\\android\\windows\\Classification\\article
 				chooser.setMultiSelectionEnabled(true);
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				int result = chooser.showOpenDialog(null);
@@ -367,7 +373,7 @@ public class HomeFrame extends JFrame {
 					updateSelectedCounts();
 					progressBar.setMaximum(userFiles.size() + classiyProgress);
 					progressBar.setMinimum(0);
-					progressBar.setValue(0);
+					updateProgressBar(0);
 					//允许开始分类按钮
 					startBtn.setEnabled(true);
 					clearBtn.setEnabled(true);
@@ -501,7 +507,9 @@ public class HomeFrame extends JFrame {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				String className = (String)classList.getSelectedValue();
+				String str = (String)classList.getSelectedValue();
+				String[] arr = str.split("\\(");
+				String className = arr[0];
 				updateViewPanel(resultMap.get(className));
 			}
 		});

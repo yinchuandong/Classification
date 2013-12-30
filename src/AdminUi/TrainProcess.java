@@ -12,9 +12,11 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -69,15 +71,17 @@ public class TrainProcess extends BaseWordCut{
 				File[] files = dir.listFiles();
 				System.out.print(dir.getName()+" ");
 				for (File file : files) {
-					BufferedReader reader = new BufferedReader(new FileReader(file));
-					String temp = null;
-					String content = "";
-					while((temp = reader.readLine()) != null){
-						content += temp;
-					}
-					articles.put(file, content);
-					System.out.print(curFileIndex+" ");
-					curFileIndex++;
+//					if(FileHelper.getFileExt(file).equals("txt")){
+						BufferedReader reader = new BufferedReader(new FileReader(file));
+						String temp = null;
+						String content = "";
+						while((temp = reader.readLine()) != null){
+							content += temp;
+						}
+						articles.put(file, content);
+						System.out.print(curFileIndex+" ");
+						curFileIndex++;
+//					}
 				}
 				System.out.println();
 			}
@@ -163,10 +167,12 @@ public class TrainProcess extends BaseWordCut{
 					if(wordsDict.containsKey(itemName)){
 						index = wordsDict.get(itemName);
 					}	
-//					System.out.print(index + ":" + itemMap.get(itemName) + " ");
+					System.out.print(index + ":" + itemMap.get(itemName) + " ");
 					writer.print(index + ":" + itemMap.get(itemName) + " ");
 				}
+				System.out.println();
 				writer.println();
+				writer.flush();
 			}
 			writer.flush();
 		} catch (Exception e) {
@@ -177,11 +183,24 @@ public class TrainProcess extends BaseWordCut{
 	
 	public static void main(String[] args) throws Exception{
 		
+		Date begin = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		System.out.println(dateFormat.format(begin));
+		
 		TrainProcess model = new TrainProcess();
 //		model.cutWord("article/");
 		model.cutWord("E:\\article\\");
+		System.out.println("正在开始生成字典");
 		model.makeDictionary(new File("trainfile/dictionary.txt"));//生成所有词的字典
+		System.out.println("字典生成完毕");
+		System.out.println("开始转换成libsvm语料");
 		model.convertToSvmFormat(new File("trainfile/svm.train"));//把语料转换成libsvm的模式
+		System.out.println("转换完成");
+		Date end = new Date();
+		System.out.println(dateFormat.format(begin));
+		System.out.println(dateFormat.format(end));
+		int min = (int)(end.getTime() - begin.getTime())/(1000*60);
+		System.out.println("耗时："+min);
 	}
 	
 	

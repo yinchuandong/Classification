@@ -178,12 +178,14 @@ public class WordCut extends BaseWordCut {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		File[] files = new File[]{
-				new File("article/政治法律/1.txt"),
-				new File("article/政治法律/2.txt"),
-				new File("article/艺术/1.txt")
-				};
-		run(files,null);
+//		File[] files = new File[]{
+//				new File("article/政治法律/1.txt"),
+//				new File("article/政治法律/2.txt"),
+//				new File("article/艺术/1.txt")
+//				};
+//		run(files,null);
+		BaseWordCut model = new BaseWordCut();
+		model.doCutWord("我是一个中国人，我爱打篮球，我喜欢后仰跳投舟曲县城火箭(21-12)三连胜终止。先发五虎只有1人得分上双，钱德勒-帕森斯15分，德怀特-霍华德9分9个篮板，詹姆斯[微博]-哈登8分，林书豪[微博]6分3个篮板。替补出场的奥姆里-卡斯比15分，阿隆-布鲁克斯[微博]17分。");
 	}
 	
 	
