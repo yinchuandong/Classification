@@ -129,17 +129,19 @@ public class WordCut extends BaseWordCut {
 	 */
 	private void convertToSvmFormat(File outFile){
 		try {
-			TfIdfHelper tfIdfHelper = new TfIdfHelper(articleWordsMap);
-			this.tfIdfMap = tfIdfHelper.calculate();
+//			TfIdfHelper tfIdfHelper = new TfIdfHelper(articleWordsMap);
+//			this.tfIdfMap = tfIdfHelper.calculate();
 			PrintWriter writer = new PrintWriter(outFile);
-			Iterator<File> artIterator = tfIdfMap.keySet().iterator();
+			Iterator<File> artIterator = articleWordsMap.keySet().iterator();
 			while (artIterator.hasNext()) {
 				File file = artIterator.next();
 				//写入svm语料的类别号
 				writer.print(getClassLabel(file) + " ");
 //				writer.print(getClassLabel(file.getName()) + " ");
 //				System.out.println(file.getParentFile().getName()+" ");
-				HashMap<String, Double> artWords = tfIdfMap.get(file);
+				
+//				HashMap<String, Double> artWords = tfIdfMap.get(file);
+				HashMap<String, Integer> artWords = articleWordsMap.get(file);
 				Iterator<String> wordsIterator = artWords.keySet().iterator();
 				while (wordsIterator.hasNext()) {
 					String item = (String) wordsIterator.next();
