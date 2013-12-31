@@ -507,10 +507,15 @@ public class HomeFrame extends JFrame {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				String str = (String)classList.getSelectedValue();
-				String[] arr = str.split("\\(");
-				String className = arr[0];
-				updateViewPanel(resultMap.get(className));
+				try{
+					String str = (String)classList.getSelectedValue();
+					String[] arr = str.split("\\(");
+					String className = arr[0];
+					updateViewPanel(resultMap.get(className));
+				}catch(Exception ex){
+					
+				}
+				
 			}
 		});
 	}
