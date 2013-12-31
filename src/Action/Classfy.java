@@ -20,7 +20,7 @@ public class Classfy {
 	 * @throws IOException
 	 */
 	public static ArrayList<Double> run() throws IOException{
-		String[] parg = {"testfile/svm.test","trainfile/svm.model","testfile/result.txt"};
+		String[] parg = {"testfile/svmscale.test","trainfile/svm.model","testfile/result.txt"};
 		svm_predict.main(parg);
 		ArrayList<Double> result = new ArrayList<Double>();
 		File file = new File("testfile/result.txt");
