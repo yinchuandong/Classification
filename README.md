@@ -1,9 +1,26 @@
-Ê¹ÓÃ·½·¨£º
+Content-based text auto-classification system
+=====================
 
-¹ÜÀíÔ±£º
-1.ÏÈµ÷ÓÃAdminUi->TrainProcess´¦Àí³ÉlibsvmÓïÁÏ¸ñÊ½
-2.ÔÙµ÷ÓÃAdminUi->UiMainÉú³ÉÄ£ÐÍ
+### Introduction: 
+    A Java app classifying files with the extension of txt and doc through auto-parsing the contents of the file, and export the     result to disk
+    (http://blog.csdn.net/yinchuandong2/article/details/17717449)
+### Tasks: 
+    Chinese Word Segmenter/SVM classification algorithm/User interface design
+### Functions:
+    1.  	Allow user choose multi-files once from file system 
+    2.  	Classify the files chosen by user
+    3. 	Export the result to disk by make different directories named after the class label
+### Technologies:
+    1.  	Crawl the corpus from different websites and preprocess by segmenting words
+    2.  	Transform the segmenting result into the training set of LibSvm and build model
+    3.  	Segment the content of target files and predict according to SVM model
 
-ÓÃ»§£º
-1.ÏÈµ÷ÓÃAction->WordCut ¶ÔÄ¬ÈÏµÄÄ¿Â¼½øÐÐ·Ö´Ê´¦Àí
-2.ÔÙµ÷ÓÃAction->Classify ½øÐÐ·ÖÀà
+### ä½¿ç”¨æ–¹æ³•ï¼š
+
+ç®¡ç†å‘˜ï¼š
+1.å…ˆè°ƒç”¨AdminUi->TrainProcesså¤„ç†æˆlibsvmè¯­æ–™æ ¼å¼
+2.å†è°ƒç”¨AdminUi->UiMainç”Ÿæˆæ¨¡åž‹
+
+ç”¨æˆ·ï¼š
+1.å…ˆè°ƒç”¨Action->WordCut å¯¹é»˜è®¤çš„ç›®å½•è¿›è¡Œåˆ†è¯å¤„ç†
+2.å†è°ƒç”¨Action->Classify è¿›è¡Œåˆ†ç±»
